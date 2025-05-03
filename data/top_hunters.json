@@ -1,0 +1,74 @@
+{
+  "top_hunters": [
+    {
+      "id": "0323",
+      "name": "foxfang",
+      "avg_time": 191.0,
+      "total_matches": 7,
+      "fastest_time": 95
+    },
+    {
+      "id": "7276",
+      "name": "R.O.B.B.I.E.",
+      "avg_time": 212.66666666666666,
+      "total_matches": 9,
+      "fastest_time": 92
+    },
+    {
+      "id": "3415",
+      "name": "Hot-Lock",
+      "avg_time": 219.0089552238806,
+      "total_matches": 335,
+      "fastest_time": 91
+    },
+    {
+      "id": "8856",
+      "name": "niq V",
+      "avg_time": 224.33333333333334,
+      "total_matches": 3,
+      "fastest_time": 116
+    },
+    {
+      "id": "3243",
+      "name": "Fireshift",
+      "avg_time": 232.9,
+      "total_matches": 10,
+      "fastest_time": 91
+    },
+    {
+      "id": "7465",
+      "name": "CHA0S",
+      "avg_time": 237.75,
+      "total_matches": 12,
+      "fastest_time": 92
+    },
+    {
+      "id": "4457",
+      "name": "Bonesaw",
+      "avg_time": 238.4090909090909,
+      "total_matches": 22,
+      "fastest_time": 91
+    },
+    {
+      "id": "5499",
+      "name": "haxlotl",
+      "avg_time": 239.59493670886076,
+      "total_matches": 79,
+      "fastest_time": 90
+    },
+    {
+      "id": "3326",
+      "name": "meckromancer",
+      "avg_time": 258.54761904761904,
+      "total_matches": 42,
+      "fastest_time": 92
+    },
+    {
+      "id": "9313",
+      "name": "Jark The Shark",
+      "avg_time": 274.0,
+      "total_matches": 3,
+      "fastest_time": 221
+    }
+  ]
+}

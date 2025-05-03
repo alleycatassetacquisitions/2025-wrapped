@@ -1,0 +1,193 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&family=Titillium+Web:wght@200;300;400;600;700&family=Exo+2:wght@100;200;300;400;500;600;700&family=Audiowide&display=swap');
+
+/* Import custom fonts */
+@font-face {
+  font-family: 'Cyber';
+  src: url('/fonts/Cyber.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Charge Vector';
+  src: url('/fonts/Charge Vector.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Gore Regular';
+  src: url('/fonts/Gore Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mylodon-Light';
+  src: url('/fonts/Mylodon-Light.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'cruiserfortresspunch';
+  src: url('/fonts/cruiserfortresspunch.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 209, 215, 224;
+  --background-start-rgb: 13, 2, 33;
+  --background-end-rgb: 25, 11, 40;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      rgb(var(--background-start-rgb)),
+      rgb(var(--background-end-rgb))
+    )
+    fixed;
+  font-family: 'Titillium Web', 'Share Tech Mono', sans-serif;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Rajdhani', 'Orbitron', sans-serif;
+}
+
+@layer components {
+  .neon-text-pink {
+    color: #FF00FF;
+    text-shadow: 0 0 0.25px #FF00FF, 0 0 0.5px #FF00FF;
+  }
+  
+  .neon-text-blue {
+    color: #00F0FF;
+    text-shadow: 0 0 0.25px #00F0FF, 0 0 0.5px #00F0FF;
+  }
+  
+  .neon-text-purple {
+    color: #9900FF;
+    text-shadow: 0 0 0.25px #9900FF, 0 0 0.5px #9900FF;
+  }
+  
+  .neon-text-green {
+    color: #39FF14;
+    text-shadow: 0 0 0.25px #39FF14, 0 0 0.5px #39FF14;
+  }
+  
+  .neon-text-yellow {
+    color: #FFFF00;
+    text-shadow: 0 0 0.25px #FFFF00, 0 0 0.5px #FFFF00;
+  }
+  
+  .cyber-border {
+    border: 2px solid #00F0FF;
+    box-shadow: 0 0 0.25px #00F0FF, 0 0 0.5px #00F0FF;
+  }
+  
+  .cyber-card {
+    @apply bg-cyber-dark bg-opacity-90 rounded-md p-6 border border-neon-blue shadow-neon-blue;
+  }
+  
+  .glitch {
+    position: relative;
+  }
+  
+  .glitch::before,
+  .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.5;
+  }
+  
+  .glitch::before {
+    left: 1px;
+    text-shadow: -0.5px 0 #FF00FF;
+    clip: rect(24px, 550px, 90px, 0);
+    animation: glitch-anim 3s infinite linear alternate-reverse;
+  }
+  
+  .glitch::after {
+    left: -1px;
+    text-shadow: 0.5px 0 #00F0FF;
+    clip: rect(85px, 550px, 140px, 0);
+    animation: glitch-anim 4s infinite linear alternate-reverse;
+  }
+  
+  @keyframes glitch-anim {
+    0% {
+      clip: rect(32px, 9999px, 66px, 0);
+    }
+    20% {
+      clip: rect(92px, 9999px, 129px, 0);
+    }
+    40% {
+      clip: rect(63px, 9999px, 30px, 0);
+    }
+    60% {
+      clip: rect(11px, 9999px, 5px, 0);
+    }
+    80% {
+      clip: rect(57px, 9999px, 123px, 0);
+    }
+    100% {
+      clip: rect(4px, 9999px, 143px, 0);
+    }
+  }
+  
+  .scanner {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .scanner::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(0, 240, 255, 0.1),
+      transparent
+    );
+    animation: scan 3s infinite;
+  }
+  
+  @keyframes scan {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 200%;
+    }
+  }
+} 
