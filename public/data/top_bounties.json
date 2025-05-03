@@ -1,0 +1,74 @@
+{
+  "top_bounties": [
+    {
+      "id": "1492",
+      "name": "C.O.K.E",
+      "avg_time": 168.66666666666666,
+      "total_matches": 12,
+      "fastest_time": 92
+    },
+    {
+      "id": "6775",
+      "name": "PR34CH3R",
+      "avg_time": 181.475,
+      "total_matches": 40,
+      "fastest_time": 90
+    },
+    {
+      "id": "1064",
+      "name": "5.c0rp",
+      "avg_time": 195.28571428571428,
+      "total_matches": 7,
+      "fastest_time": 91
+    },
+    {
+      "id": "5413",
+      "name": "Commander Mox",
+      "avg_time": 204.13333333333333,
+      "total_matches": 15,
+      "fastest_time": 92
+    },
+    {
+      "id": "1173",
+      "name": "sqwak",
+      "avg_time": 225.5,
+      "total_matches": 4,
+      "fastest_time": 167
+    },
+    {
+      "id": "9022",
+      "name": "Bebe",
+      "avg_time": 227.66666666666666,
+      "total_matches": 3,
+      "fastest_time": 157
+    },
+    {
+      "id": "3114",
+      "name": "D-Cipher",
+      "avg_time": 236.75,
+      "total_matches": 4,
+      "fastest_time": 152
+    },
+    {
+      "id": "7221",
+      "name": "Nexus",
+      "avg_time": 238.86666666666667,
+      "total_matches": 30,
+      "fastest_time": 92
+    },
+    {
+      "id": "5222",
+      "name": "circuit mouse",
+      "avg_time": 240.61363636363637,
+      "total_matches": 88,
+      "fastest_time": 90
+    },
+    {
+      "id": "3607",
+      "name": "ZZO",
+      "avg_time": 242.75,
+      "total_matches": 4,
+      "fastest_time": 177
+    }
+  ]
+}

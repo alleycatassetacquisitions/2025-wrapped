@@ -1,13 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getGlobalStats, getPlayerStats, getBestPlayers, getTopHunters, getTopBounties, getTopHunterWinners, getTopBountyWinners } from '@/lib/data';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { type, playerId } = req.query;
 
     // Get stats for a specific player
     if (playerId) {
-      const stats = getPlayerStats(playerId as string);
+      const stats = await getPlayerStats(playerId as string);
       return res.status(200).json(stats);
     }
     
@@ -15,24 +15,24 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     if (type) {
       switch (type) {
         case 'global':
-          return res.status(200).json(getGlobalStats());
+          return res.status(200).json(await getGlobalStats());
         case 'best':
-          return res.status(200).json(getBestPlayers());
+          return res.status(200).json(await getBestPlayers());
         case 'hunters':
-          return res.status(200).json(getTopHunters());
+          return res.status(200).json(await getTopHunters());
         case 'bounties':
-          return res.status(200).json(getTopBounties());
+          return res.status(200).json(await getTopBounties());
         case 'hunter-winners':
-          return res.status(200).json(getTopHunterWinners());
+          return res.status(200).json(await getTopHunterWinners());
         case 'bounty-winners':
-          return res.status(200).json(getTopBountyWinners());
+          return res.status(200).json(await getTopBountyWinners());
         default:
           return res.status(400).json({ error: 'Invalid stats type' });
       }
     }
     
     // Get global stats by default
-    return res.status(200).json(getGlobalStats());
+    return res.status(200).json(await getGlobalStats());
   } catch (error: any) {
     return res.status(500).json({ error: error.message || 'Internal server error' });
   }

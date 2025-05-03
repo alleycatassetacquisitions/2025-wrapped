@@ -1,30 +1,38 @@
 import fs from 'fs';
 import path from 'path';
 import getConfig from 'next/config';
+import { getJSONData } from './clientData';
 
 // Get the server runtime config
 const { serverRuntimeConfig } = getConfig();
 
 // Check if we're running on the server side
 const isServer = typeof window === 'undefined';
+const isDevelopment = process.env.NODE_ENV === 'development';
 
 // Function to read JSON file
-export function readJsonFile(filePath: string) {
-  // Only use fs on the server side
-  if (!isServer) {
-    console.error('Attempted to read a file on the client side');
-    return { data: [] };
+export async function readJsonFile(filePath: string) {
+  // In development, use file system if on server
+  if (isDevelopment && isServer) {
+    try {
+      const fullPath = path.join(process.cwd(), filePath);
+      const fileContents = fs.readFileSync(fullPath, 'utf8');
+      return JSON.parse(fileContents);
+    } catch (error) {
+      console.error(`Error reading file ${filePath}:`, error);
+      return { data: [] };
+    }
   }
   
-  const fullPath = path.join(process.cwd(), filePath);
-  const fileContents = fs.readFileSync(fullPath, 'utf8');
-  return JSON.parse(fileContents);
+  // In production or on client side, use fetch
+  const filename = filePath.split('/').pop() || '';
+  return getJSONData(filename);
 }
 
 // Get players data
-export function getPlayers() {
+export async function getPlayers() {
   try {
-    const data = readJsonFile('data/players.json');
+    const data = await readJsonFile('data/players.json');
     return data.data || [];
   } catch (error) {
     console.error('Error loading players data:', error);
@@ -33,9 +41,9 @@ export function getPlayers() {
 }
 
 // Get best players
-export function getBestPlayers() {
+export async function getBestPlayers() {
   try {
-    const data = readJsonFile('data/best_players.json');
+    const data = await readJsonFile('data/best_players.json');
     return data.best_players || [];
   } catch (error) {
     console.error('Error loading best players data:', error);
@@ -44,9 +52,9 @@ export function getBestPlayers() {
 }
 
 // Get top hunters
-export function getTopHunters() {
+export async function getTopHunters() {
   try {
-    const data = readJsonFile('data/top_hunters.json');
+    const data = await readJsonFile('data/top_hunters.json');
     return data.top_hunters || [];
   } catch (error) {
     console.error('Error loading top hunters data:', error);
@@ -55,9 +63,9 @@ export function getTopHunters() {
 }
 
 // Get top bounties
-export function getTopBounties() {
+export async function getTopBounties() {
   try {
-    const data = readJsonFile('data/top_bounties.json');
+    const data = await readJsonFile('data/top_bounties.json');
     return data.top_bounties || [];
   } catch (error) {
     console.error('Error loading top bounties data:', error);
@@ -66,9 +74,9 @@ export function getTopBounties() {
 }
 
 // Get matches
-export function getMatches() {
+export async function getMatches() {
   try {
-    const data = readJsonFile('data/matches.json');
+    const data = await readJsonFile('data/matches.json');
     return data.data || [];
   } catch (error) {
     console.error('Error loading matches data:', error);
@@ -77,28 +85,28 @@ export function getMatches() {
 }
 
 // Get player by ID
-export function getPlayerById(id: string) {
-  const players = getPlayers();
+export async function getPlayerById(id: string) {
+  const players = await getPlayers();
   return players.find((player: any) => player.id === id) || null;
 }
 
 // Get all player IDs
-export function getAllPlayerIds() {
-  const players = getPlayers();
+export async function getAllPlayerIds() {
+  const players = await getPlayers();
   return players.map((player: any) => player.id);
 }
 
 // Get player matches
-export function getPlayerMatches(playerId: string) {
-  const matches = getMatches();
+export async function getPlayerMatches(playerId: string) {
+  const matches = await getMatches();
   return matches.filter((match: any) => 
     match.hunter === playerId || match.bounty === playerId
   );
 }
 
 // Get player stats
-export function getPlayerStats(playerId: string) {
-  const matches = getPlayerMatches(playerId);
+export async function getPlayerStats(playerId: string) {
+  const matches = await getPlayerMatches(playerId);
   
   const hunterMatches = matches.filter((match: any) => match.hunter === playerId);
   const bountyMatches = matches.filter((match: any) => match.bounty === playerId);
@@ -186,10 +194,10 @@ function calculatePerformanceScore(stats: any) {
 }
 
 // Search players by name or ID
-export function searchPlayers(query: string) {
+export async function searchPlayers(query: string) {
   if (!query) return [];
   
-  const players = getPlayers();
+  const players = await getPlayers();
   const lowerQuery = query.toLowerCase();
   
   return players.filter((player: any) => 
@@ -199,8 +207,8 @@ export function searchPlayers(query: string) {
 }
 
 // Get all factions
-export function getAllFactions() {
-  const players = getPlayers();
+export async function getAllFactions() {
+  const players = await getPlayers();
   const factions = new Set<string>();
   
   players.forEach((player: any) => {
@@ -213,16 +221,16 @@ export function getAllFactions() {
 }
 
 // Get players by faction
-export function getPlayersByFaction(faction: string) {
-  const players = getPlayers();
+export async function getPlayersByFaction(faction: string) {
+  const players = await getPlayers();
   return players.filter((player: any) => 
     player.faction.toLowerCase() === faction.toLowerCase()
   );
 }
 
 // Get global stats
-export function getGlobalStats() {
-  const matches = getMatches();
+export async function getGlobalStats() {
+  const matches = await getMatches();
   const totalMatches = matches.length;
   
   const hunterWins = matches.filter((match: any) => match.winner_is_hunter === 1).length;
@@ -267,10 +275,10 @@ export function getGlobalStats() {
 }
 
 // Get top hunter winners
-export function getTopHunterWinners() {
+export async function getTopHunterWinners() {
   try {
-    const players = getPlayers();
-    const matches = getMatches();
+    const players = await getPlayers();
+    const matches = await getMatches();
     
     // Group matches by hunter
     const hunterStats: { [key: string]: { wins: number, matches: number, name: string, id: string } } = {};
@@ -310,10 +318,10 @@ export function getTopHunterWinners() {
 }
 
 // Get top bounty winners
-export function getTopBountyWinners() {
+export async function getTopBountyWinners() {
   try {
-    const players = getPlayers();
-    const matches = getMatches();
+    const players = await getPlayers();
+    const matches = await getMatches();
     
     // Group matches by bounty
     const bountyStats: { [key: string]: { wins: number, matches: number, name: string, id: string } } = {};
@@ -353,18 +361,18 @@ export function getTopBountyWinners() {
 }
 
 // Calculate player rankings
-export function calculatePlayerRankings() {
+export async function calculatePlayerRankings() {
   try {
-    const players = getPlayers();
+    const players = await getPlayers();
     const hunterRankings: { id: string; score: number }[] = [];
     const bountyRankings: { id: string; score: number }[] = [];
     const overallRankings: { id: string; score: number }[] = [];
     
     // Calculate scores for each player
-    players.forEach((player: any) => {
-      const stats = getPlayerStats(player.id);
+    for (const player of players) {
+      const stats = await getPlayerStats(player.id);
       
-      if (stats.totalMatches === 0) return; // Skip players with no matches
+      if (stats.totalMatches === 0) continue; // Skip players with no matches
       
       // Add to overall rankings
       overallRankings.push({
@@ -388,7 +396,7 @@ export function calculatePlayerRankings() {
           score: bountyScore
         });
       }
-    });
+    }
     
     // Sort all rankings by score (descending)
     overallRankings.sort((a, b) => b.score - a.score);
@@ -431,10 +439,10 @@ function calculateRoleScore(stats: any, isHunter: boolean) {
 }
 
 // Get player ranking by ID
-export function getPlayerRanking(playerId: string) {
+export async function getPlayerRanking(playerId: string) {
   try {
-    const rankings = calculatePlayerRankings();
-    const player = getPlayerById(playerId);
+    const rankings = await calculatePlayerRankings();
+    const player = await getPlayerById(playerId);
     
     if (!rankings || !player) {
       return {

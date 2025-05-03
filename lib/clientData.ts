@@ -2,6 +2,20 @@ import useSWR from 'swr';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
+// Function to get data from a JSON file in the public directory
+export async function getJSONData(filename: string) {
+  try {
+    const response = await fetch(`/data/${filename}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${filename}`);
+    }
+    return response.json();
+  } catch (error) {
+    console.error(`Error fetching ${filename}:`, error);
+    return { data: [] };
+  }
+}
+
 // Search players
 export function useSearchPlayers(query: string) {
   const { data, error } = useSWR(
