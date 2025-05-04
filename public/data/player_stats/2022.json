@@ -1,0 +1,24 @@
+{
+  "id": "2022",
+  "hunterMatches": 6,
+  "bountyMatches": 0,
+  "hunterWins": 1,
+  "bountyWins": 0,
+  "totalMatches": 6,
+  "totalWins": 1,
+  "winRate": 0.16666666666666666,
+  "avgHunterTime": 862.2,
+  "avgBountyTime": 0,
+  "fastestHunterTime": 559,
+  "fastestBountyTime": 0,
+  "avgReactionTime": 862.2,
+  "score": 22.3973556019485,
+  "rankings": {
+    "overall": 246,
+    "hunter": 99,
+    "bounty": 0,
+    "winRatio": 280,
+    "totalPoints": 280,
+    "reactionTime": 259
+  }
+}

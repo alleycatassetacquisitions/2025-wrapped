@@ -1,0 +1,338 @@
+[
+  {
+    "match_id": "616e7b52-12c0-4fac-a8f0-c1c85f76cbc5",
+    "hunter": "3656",
+    "bounty": "1844",
+    "hunter_time": 368,
+    "bounty_time": 384,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "435a7795-98ee-4c6a-b2e2-e15843a885ba",
+    "hunter": "3656",
+    "bounty": "1844",
+    "hunter_time": 348,
+    "bounty_time": 351,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "9b6179cc-13de-4eb6-98b8-3e5953b6d910",
+    "hunter": "3656",
+    "bounty": "6159",
+    "hunter_time": 147,
+    "bounty_time": 343,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "0e99d7c7-46b6-49ff-b811-658cf68665f7",
+    "hunter": "3656",
+    "bounty": "4304",
+    "hunter_time": 411,
+    "bounty_time": 397,
+    "winner_is_hunter": 0
+  },
+  {
+    "match_id": "d64be3c0-1d24-4c82-ad83-8922abb8e742",
+    "hunter": "3656",
+    "bounty": "6167",
+    "hunter_time": 155,
+    "bounty_time": 1095,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "64f68cdf-f440-469d-8411-eb02f25e5cfc",
+    "hunter": "3656",
+    "bounty": "7165",
+    "hunter_time": 283,
+    "bounty_time": 1627,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "076bd700-7b6c-46a5-b455-b6704006356c",
+    "hunter": "3656",
+    "bounty": "9675",
+    "hunter_time": 429,
+    "bounty_time": 233,
+    "winner_is_hunter": 0
+  },
+  {
+    "match_id": "4ef41ee3-2e88-454c-998a-24308e87a6b1",
+    "hunter": "3656",
+    "bounty": "9637",
+    "hunter_time": 374,
+    "bounty_time": 231,
+    "winner_is_hunter": 0
+  },
+  {
+    "match_id": "a3c132d5-d61d-41f5-8d74-4dc158a8460f",
+    "hunter": "3656",
+    "bounty": "1844",
+    "hunter_time": 685,
+    "bounty_time": 2212,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "f45a1632-cc74-4099-b256-03898e954bd2",
+    "hunter": "3656",
+    "bounty": "9022",
+    "hunter_time": 668,
+    "bounty_time": 242,
+    "winner_is_hunter": 0
+  },
+  {
+    "match_id": "1fd3f169-3a64-4c99-bf5b-6ac96516e5ac",
+    "hunter": "3656",
+    "bounty": "7165",
+    "hunter_time": 0,
+    "bounty_time": 497,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "9d02599b-c84b-4f59-9ccb-9ecd62d09687",
+    "hunter": "3656",
+    "bounty": "7165",
+    "hunter_time": 426,
+    "bounty_time": 538,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "98ed03a7-4344-4c8b-b55c-da67b6ab43a9",
+    "hunter": "3656",
+    "bounty": "3805",
+    "hunter_time": 167,
+    "bounty_time": 553,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "844a73d7-13f1-432d-b625-7a5114528c13",
+    "hunter": "3656",
+    "bounty": "9022",
+    "hunter_time": 410,
+    "bounty_time": 832,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "cf27e77b-9131-44ff-96de-8d73ec2d9802",
+    "hunter": "3656",
+    "bounty": "9022",
+    "hunter_time": 483,
+    "bounty_time": 1024,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "fc59b65f-f0aa-4711-9d76-46db54fd6559",
+    "hunter": "3656",
+    "bounty": "6167",
+    "hunter_time": 343,
+    "bounty_time": 963,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "1f1ed998-d468-4611-a144-1410342ae7cc",
+    "hunter": "3656",
+    "bounty": "7165",
+    "hunter_time": 456,
+    "bounty_time": 0,
+    "winner_is_hunter": 0
+  },
+  {
+    "match_id": "5a9115ce-12e4-4951-b577-579c5e34dfcf",
+    "hunter": "3656",
+    "bounty": "7165",
+    "hunter_time": 505,
+    "bounty_time": 1068,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "4bb7a880-f841-4917-aa8a-49595c63444d",
+    "hunter": "3656",
+    "bounty": "3217",
+    "hunter_time": 382,
+    "bounty_time": 462,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "b9032519-7d69-4d84-98af-e5e0d3ae53dd",
+    "hunter": "3656",
+    "bounty": "6469",
+    "hunter_time": 377,
+    "bounty_time": 684,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "c77e47ad-b347-43d3-804b-a767c2975c02",
+    "hunter": "3656",
+    "bounty": "1206",
+    "hunter_time": 543,
+    "bounty_time": 438,
+    "winner_is_hunter": 0
+  },
+  {
+    "match_id": "146f1e00-bf6c-4934-a141-f4c17486ec74",
+    "hunter": "3656",
+    "bounty": "4617",
+    "hunter_time": 0,
+    "bounty_time": 539,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "df93e6ab-f737-401c-991e-c0698ce815a6",
+    "hunter": "3656",
+    "bounty": "4617",
+    "hunter_time": 320,
+    "bounty_time": 311,
+    "winner_is_hunter": 0
+  },
+  {
+    "match_id": "ef865e14-6187-49cf-ab7a-a2eebdd4e844",
+    "hunter": "3656",
+    "bounty": "1206",
+    "hunter_time": 168,
+    "bounty_time": 425,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "27bc0a7d-4cae-47ce-82d2-4e28b7a145fb",
+    "hunter": "3656",
+    "bounty": "2642",
+    "hunter_time": 290,
+    "bounty_time": 401,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "291646c4-9b96-4ae1-89ab-70a19c51799d",
+    "hunter": "3656",
+    "bounty": "9246",
+    "hunter_time": 288,
+    "bounty_time": 456,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "57b63fc7-fc1a-4ef9-b384-dc7816ea1269",
+    "hunter": "3656",
+    "bounty": "6655",
+    "hunter_time": 482,
+    "bounty_time": 193,
+    "winner_is_hunter": 0
+  },
+  {
+    "match_id": "42813052-5239-469b-9302-d29eabd9fad2",
+    "hunter": "3656",
+    "bounty": "6655",
+    "hunter_time": 4574,
+    "bounty_time": 3666,
+    "winner_is_hunter": 0
+  },
+  {
+    "match_id": "aa5ed666-c465-45c4-8def-40663f1b1bcf",
+    "hunter": "3656",
+    "bounty": "0919",
+    "hunter_time": 341,
+    "bounty_time": 482,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "8ad9facd-b864-4d5c-9b83-777607c7034d",
+    "hunter": "3656",
+    "bounty": "0919",
+    "hunter_time": 476,
+    "bounty_time": 749,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "f527b373-56fe-4135-9fc8-532109569d39",
+    "hunter": "3656",
+    "bounty": "3153",
+    "hunter_time": 329,
+    "bounty_time": 184,
+    "winner_is_hunter": 0
+  },
+  {
+    "match_id": "8b34504e-5659-4456-9206-3b3f8db60399",
+    "hunter": "3656",
+    "bounty": "3153",
+    "hunter_time": 358,
+    "bounty_time": 280,
+    "winner_is_hunter": 0
+  },
+  {
+    "match_id": "47612028-fbae-4aef-adb9-cc8d9909201e",
+    "hunter": "3656",
+    "bounty": "1935",
+    "hunter_time": 338,
+    "bounty_time": 392,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "f8838a1b-f7bf-4a68-8316-854e396fe218",
+    "hunter": "3656",
+    "bounty": "1935",
+    "hunter_time": 326,
+    "bounty_time": 887,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "e8ab8f57-b1e5-4bb0-9adf-d64c8eda7e68",
+    "hunter": "3656",
+    "bounty": "8465",
+    "hunter_time": 0,
+    "bounty_time": 1519,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "c469c0e0-538c-49fd-bd73-51e0d24710f2",
+    "hunter": "3656",
+    "bounty": "4690",
+    "hunter_time": 192,
+    "bounty_time": 385,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "7bfe6d52-9fc1-49c2-ba56-8ad252671c6c",
+    "hunter": "3656",
+    "bounty": "2642",
+    "hunter_time": 92,
+    "bounty_time": 440,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "e36f5f12-eca2-49a9-a08f-f41a168166ca",
+    "hunter": "3656",
+    "bounty": "5222",
+    "hunter_time": 982,
+    "bounty_time": 94,
+    "winner_is_hunter": 0
+  },
+  {
+    "match_id": "b752d77a-3e87-4cd6-b33e-899b3a542f7c",
+    "hunter": "3656",
+    "bounty": "2642",
+    "hunter_time": 381,
+    "bounty_time": 197,
+    "winner_is_hunter": 0
+  },
+  {
+    "match_id": "9539842e-0f47-47de-8735-eb0be950ca7d",
+    "hunter": "3656",
+    "bounty": "2642",
+    "hunter_time": 452,
+    "bounty_time": 457,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "d4c0771d-b97e-4e77-8d5c-cdfdc90ff423",
+    "hunter": "3656",
+    "bounty": "2642",
+    "hunter_time": 1110,
+    "bounty_time": 284,
+    "winner_is_hunter": 0
+  },
+  {
+    "match_id": "f4621d09-010c-44c6-98f6-948905c6bf83",
+    "hunter": "3656",
+    "bounty": "5222",
+    "hunter_time": 361,
+    "bounty_time": 219,
+    "winner_is_hunter": 0
+  }
+]

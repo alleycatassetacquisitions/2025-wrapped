@@ -1,0 +1,24 @@
+{
+  "id": "1533",
+  "hunterMatches": 0,
+  "bountyMatches": 24,
+  "hunterWins": 0,
+  "bountyWins": 7,
+  "totalMatches": 24,
+  "totalWins": 7,
+  "winRate": 0.2916666666666667,
+  "avgHunterTime": 0,
+  "avgBountyTime": 835.7619047619048,
+  "fastestHunterTime": 0,
+  "fastestBountyTime": 303,
+  "avgReactionTime": 835.7619047619048,
+  "score": 44.49615881336296,
+  "rankings": {
+    "overall": 174,
+    "hunter": 0,
+    "bounty": 131,
+    "winRatio": 234,
+    "totalPoints": 110,
+    "reactionTime": 254
+  }
+}

@@ -1,0 +1,18 @@
+[
+  {
+    "match_id": "d2b69a8b-6730-459d-8567-9ad13f9d621b",
+    "hunter": "7571",
+    "bounty": "6088",
+    "hunter_time": 410,
+    "bounty_time": 951,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "e6ea6f02-c32d-4291-8aa4-5771e3e75287",
+    "hunter": "0867",
+    "bounty": "6088",
+    "hunter_time": 271,
+    "bounty_time": 1217,
+    "winner_is_hunter": 1
+  }
+]

@@ -1,0 +1,24 @@
+{
+  "id": "2026",
+  "hunterMatches": 1,
+  "bountyMatches": 0,
+  "hunterWins": 0,
+  "bountyWins": 0,
+  "totalMatches": 1,
+  "totalWins": 0,
+  "winRate": 0,
+  "avgHunterTime": 442,
+  "avgBountyTime": 0,
+  "fastestHunterTime": 442,
+  "fastestBountyTime": 0,
+  "avgReactionTime": 442,
+  "score": 5.656108597285068,
+  "rankings": {
+    "overall": 310,
+    "hunter": 123,
+    "bounty": 0,
+    "winRatio": 324,
+    "totalPoints": 324,
+    "reactionTime": 86
+  }
+}

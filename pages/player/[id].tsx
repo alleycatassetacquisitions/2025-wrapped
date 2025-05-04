@@ -162,10 +162,12 @@ export default function PlayerDetail() {
   const totalMatches = stats.totalMatches || 0;
   
   // Format rankings with appropriate text
+  // Total Points ranking is solely based on the number of wins a player has achieved
   const formattedRankings = {
-    overall: rankings.overall > 0 ? `#${rankings.overall}` : 'Unranked',
-    hunter: rankings.hunter > 0 ? `#${rankings.hunter}` : 'Unranked',
-    bounty: rankings.bounty > 0 ? `#${rankings.bounty}` : 'Unranked'
+    totalPoints: rankings.totalPoints > 0 ? `#${rankings.totalPoints}` : 
+                (rankings.overall > 0 ? `#${rankings.overall}` : 'Unranked'),
+    winRatio: rankings.winRatio > 0 ? `#${rankings.winRatio}` : 'Unranked',
+    reactionTime: rankings.reactionTime > 0 ? `#${rankings.reactionTime}` : 'Unranked'
   };
   
   return (
@@ -209,22 +211,19 @@ export default function PlayerDetail() {
             
             <div>
               <div className="text-cyber-text mb-1">Rankings:</div>
-              <div className="grid grid-cols-2 gap-2 text-sm">
+              <div className="grid grid-cols-1 gap-2 text-sm">
                 <div>
-                  <span className="text-cyber-text">Overall:</span>{' '}
-                  <span className="neon-text-yellow">{formattedRankings.overall}</span>
+                  <span className="text-cyber-text">Total Points:</span>{' '}
+                  <span className="neon-text-yellow">{formattedRankings.totalPoints}</span>
                 </div>
-                {isHunter ? (
-                  <div>
-                    <span className="text-cyber-text">As Hunter:</span>{' '}
-                    <span className="neon-text-green">{formattedRankings.hunter}</span>
-                  </div>
-                ) : (
-                  <div>
-                    <span className="text-cyber-text">As Bounty:</span>{' '}
-                    <span className="neon-text-pink">{formattedRankings.bounty}</span>
-                  </div>
-                )}
+                <div>
+                  <span className="text-cyber-text">Win Ratio:</span>{' '}
+                  <span className="neon-text-green">{formattedRankings.winRatio}</span>
+                </div>
+                <div>
+                  <span className="text-cyber-text">Reaction Time:</span>{' '}
+                  <span className="neon-text-pink">{formattedRankings.reactionTime}</span>
+                </div>
               </div>
             </div>
           </div>

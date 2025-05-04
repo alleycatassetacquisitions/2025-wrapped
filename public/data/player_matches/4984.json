@@ -1,0 +1,26 @@
+[
+  {
+    "match_id": "9a903d76-1457-48cf-bfc6-ab88467bad9e",
+    "hunter": "2464",
+    "bounty": "4984",
+    "hunter_time": 458,
+    "bounty_time": 412,
+    "winner_is_hunter": 0
+  },
+  {
+    "match_id": "d25c9816-e6e1-4d13-88cc-28c1bd2242af",
+    "hunter": "0436",
+    "bounty": "4984",
+    "hunter_time": 431,
+    "bounty_time": 438,
+    "winner_is_hunter": 1
+  },
+  {
+    "match_id": "40e8b524-2d0a-49a8-9a4d-175bb74ab402",
+    "hunter": "8606",
+    "bounty": "4984",
+    "hunter_time": 267,
+    "bounty_time": 725,
+    "winner_is_hunter": 1
+  }
+]
