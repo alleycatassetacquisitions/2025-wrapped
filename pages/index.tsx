@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -7,6 +7,7 @@ import StatCard from '@/components/StatCard';
 import SearchBox from '@/components/SearchBox';
 import { useRouter } from 'next/router';
 import { useGlobalStats, useTopHunters, useTopBounties } from '@/lib/clientData';
+import { getCachedData } from '@/components/DataPreloader';
 
 export default function Home() {
   const router = useRouter();
@@ -15,10 +16,147 @@ export default function Home() {
   const { topBounties, isLoading: isLoadingBounties } = useTopBounties();
   
   // Fetch top winners from API
-  const [topHunterWinners, setTopHunterWinners] = React.useState([]);
-  const [topBountyWinners, setTopBountyWinners] = React.useState([]);
+  const [topHunterWinners, setTopHunterWinners] = React.useState<any[]>([]);
+  const [topBountyWinners, setTopBountyWinners] = React.useState<any[]>([]);
   const [isLoadingWinners, setIsLoadingWinners] = React.useState(true);
+  
+  // Direct data loading as backup
+  const [directStats, setDirectStats] = useState<any>({});
+  const [directTopHunters, setDirectTopHunters] = useState<any[]>([]);
+  const [directTopBounties, setDirectTopBounties] = useState<any[]>([]);
+  const [directHunterWinners, setDirectHunterWinners] = useState<any[]>([]);
+  const [directBountyWinners, setDirectBountyWinners] = useState<any[]>([]);
+  const [isLoadingDirect, setIsLoadingDirect] = useState(true);
+  const [usingDirectData, setUsingDirectData] = useState(false);
 
+  // Load data directly as fallback
+  useEffect(() => {
+    async function loadDirectData() {
+      try {
+        setIsLoadingDirect(true);
+        console.log('Loading direct data for home page');
+        
+        // Load global stats from matches
+        const matchesData = await getCachedData('matches.json');
+        const matches = matchesData.data || [];
+        
+        if (matches.length > 0) {
+          const totalMatches = matches.length;
+          const hunterWins = matches.filter((match: any) => match.winner_is_hunter === 1).length;
+          const bountyWins = matches.filter((match: any) => match.winner_is_hunter === 0).length;
+          const hunterWinRate = totalMatches > 0 ? hunterWins / totalMatches : 0;
+          
+          const validHunterTimes = matches
+            .filter((match: any) => match.hunter_time > 0)
+            .map((match: any) => match.hunter_time);
+          
+          const validBountyTimes = matches
+            .filter((match: any) => match.bounty_time > 0)
+            .map((match: any) => match.bounty_time);
+          
+          const avgHunterTime = validHunterTimes.length > 0 
+            ? validHunterTimes.reduce((sum: number, time: number) => sum + time, 0) / validHunterTimes.length 
+            : 0;
+          
+          const avgBountyTime = validBountyTimes.length > 0 
+            ? validBountyTimes.reduce((sum: number, time: number) => sum + time, 0) / validBountyTimes.length 
+            : 0;
+          
+          const fastestHunterTime = validHunterTimes.length > 0 
+            ? Math.min(...validHunterTimes) 
+            : 0;
+          
+          const fastestBountyTime = validBountyTimes.length > 0 
+            ? Math.min(...validBountyTimes) 
+            : 0;
+          
+          setDirectStats({
+            totalMatches,
+            hunterWins,
+            bountyWins,
+            hunterWinRate,
+            avgHunterTime,
+            avgBountyTime,
+            fastestHunterTime,
+            fastestBountyTime
+          });
+        }
+        
+        // Load top hunters/bounties
+        const [topHuntersData, topBountiesData] = await Promise.all([
+          getCachedData('top_hunters.json'),
+          getCachedData('top_bounties.json')
+        ]);
+        
+        setDirectTopHunters(topHuntersData.top_hunters || []);
+        setDirectTopBounties(topBountiesData.top_bounties || []);
+        
+        // Calculate winners from matches and players data
+        const playersData = await getCachedData('players.json');
+        const players = playersData.data || [];
+        
+        // Group matches by hunter
+        const hunterStats: Record<string, any> = {};
+        const bountyStats: Record<string, any> = {};
+        
+        // Initialize stats for all players
+        players.forEach((player: any) => {
+          if (player.hunter === 1) {
+            hunterStats[player.id] = {
+              wins: 0,
+              matches: 0,
+              name: player.name,
+              id: player.id
+            };
+          } else {
+            bountyStats[player.id] = {
+              wins: 0,
+              matches: 0,
+              name: player.name,
+              id: player.id
+            };
+          }
+        });
+        
+        // Count matches and wins
+        matches.forEach((match: any) => {
+          if (hunterStats[match.hunter]) {
+            hunterStats[match.hunter].matches++;
+            if (match.winner_is_hunter === 1) {
+              hunterStats[match.hunter].wins++;
+            }
+          }
+          
+          if (bountyStats[match.bounty]) {
+            bountyStats[match.bounty].matches++;
+            if (match.winner_is_hunter === 0) {
+              bountyStats[match.bounty].wins++;
+            }
+          }
+        });
+        
+        // Convert to arrays and sort
+        const sortedHunters = Object.values(hunterStats)
+          .filter((stats: any) => stats.matches > 0)
+          .sort((a: any, b: any) => b.wins - a.wins || (b.wins / b.matches) - (a.wins / a.matches));
+        
+        const sortedBounties = Object.values(bountyStats)
+          .filter((stats: any) => stats.matches > 0)
+          .sort((a: any, b: any) => b.wins - a.wins || (b.wins / b.matches) - (a.wins / a.matches));
+        
+        setDirectHunterWinners(sortedHunters);
+        setDirectBountyWinners(sortedBounties);
+      } catch (error) {
+        console.error('Error loading direct data:', error);
+      } finally {
+        setIsLoadingDirect(false);
+      }
+    }
+    
+    loadDirectData();
+  }, []);
+
+  // Load winners from API
   React.useEffect(() => {
     async function fetchWinners() {
       try {
@@ -27,26 +165,67 @@ export default function Home() {
           fetch('/api/stats?type=bounty-winners')
         ]);
         
-        const hunterData = await hunterResponse.json();
-        const bountyData = await bountyResponse.json();
-        
-        setTopHunterWinners(hunterData || []);
-        setTopBountyWinners(bountyData || []);
+        if (hunterResponse.ok && bountyResponse.ok) {
+          const hunterData = await hunterResponse.json();
+          const bountyData = await bountyResponse.json();
+          
+          setTopHunterWinners(hunterData || []);
+          setTopBountyWinners(bountyData || []);
+        } else {
+          console.error('Error fetching winners:', hunterResponse.status, bountyResponse.status);
+          // Fall back to direct data
+          setTopHunterWinners(directHunterWinners);
+          setTopBountyWinners(directBountyWinners);
+        }
       } catch (error) {
         console.error('Error fetching winners:', error);
+        // Fall back to direct data
+        setTopHunterWinners(directHunterWinners);
+        setTopBountyWinners(directBountyWinners);
       } finally {
         setIsLoadingWinners(false);
       }
     }
     
     fetchWinners();
-  }, []);
+  }, [directHunterWinners, directBountyWinners]);
+  
+  // Determine if we should use direct data
+  useEffect(() => {
+    const apiDataFailed = (
+      (!globalStats || Object.keys(globalStats).length === 0) && !isLoadingStats ||
+      (!topHunters || topHunters.length === 0) && !isLoadingHunters ||
+      (!topBounties || topBounties.length === 0) && !isLoadingBounties ||
+      (!topHunterWinners || topHunterWinners.length === 0 || !topBountyWinners || topBountyWinners.length === 0) && !isLoadingWinners
+    );
+    
+    const directDataAvailable = (
+      Object.keys(directStats).length > 0 && 
+      directTopHunters.length > 0 && 
+      directTopBounties.length > 0 &&
+      directHunterWinners.length > 0 &&
+      directBountyWinners.length > 0
+    );
+    
+    if (apiDataFailed && directDataAvailable) {
+      console.log('Using direct data for home page');
+      setUsingDirectData(true);
+    } else {
+      setUsingDirectData(false);
+    }
+  }, [
+    globalStats, isLoadingStats, 
+    topHunters, isLoadingHunters, 
+    topBounties, isLoadingBounties,
+    topHunterWinners, topBountyWinners, isLoadingWinners,
+    directStats, directTopHunters, directTopBounties, directHunterWinners, directBountyWinners
+  ]);
   
   const handleSearchResult = (playerId: string) => {
     router.push(`/player/${playerId}`);
   };
 
-  const isLoading = isLoadingStats || isLoadingHunters || isLoadingBounties || isLoadingWinners;
+  const isLoading = (isLoadingStats || isLoadingHunters || isLoadingBounties || isLoadingWinners) && isLoadingDirect;
   
   if (isLoading) {
     return (
@@ -55,6 +234,13 @@ export default function Home() {
       </div>
     );
   }
+  
+  // Use appropriate data sources
+  const statsToUse = usingDirectData ? directStats : globalStats;
+  const huntersToUse = usingDirectData ? directTopHunters : topHunters;
+  const bountiesToUse = usingDirectData ? directTopBounties : topBounties;
+  const hunterWinnersToUse = usingDirectData ? directHunterWinners : topHunterWinners;
+  const bountyWinnersToUse = usingDirectData ? directBountyWinners : topBountyWinners;
   
   return (
     <div className="space-y-12">
@@ -110,6 +296,13 @@ export default function Home() {
         </motion.div>
       </section>
       
+      {/* Data source indicator for debugging */}
+      {usingDirectData && (
+        <div className="bg-cyber-dark p-2 rounded-md border border-neon-blue text-center text-sm mb-4">
+          Using directly loaded data (API bypass)
+        </div>
+      )}
+      
       <section>
         <motion.h2 
           className="text-2xl font-heading neon-text-green mb-6"
@@ -123,28 +316,28 @@ export default function Home() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard 
             title="Total Matches" 
-            value={globalStats.totalMatches} 
+            value={statsToUse.totalMatches} 
             icon={<FaCrosshairs />} 
             color="blue"
             delay={0.4}
           />
           <StatCard 
             title="Hunter Win Rate" 
-            value={`${(globalStats.hunterWinRate * 100).toFixed(1)}%`} 
+            value={`${(statsToUse.hunterWinRate * 100).toFixed(1)}%`} 
             icon={<FaTrophy />} 
             color="green"
             delay={0.5}
           />
           <StatCard 
             title="Avg Hunter Time" 
-            value={`${globalStats.avgHunterTime.toFixed(0)}ms`} 
+            value={`${statsToUse.avgHunterTime.toFixed(0)}ms`} 
             icon={<FaBolt />} 
             color="yellow"
             delay={0.6}
           />
           <StatCard 
             title="Avg Bounty Time" 
-            value={`${globalStats.avgBountyTime.toFixed(0)}ms`} 
+            value={`${statsToUse.avgBountyTime.toFixed(0)}ms`} 
             icon={<FaShieldAlt />} 
             color="pink"
             delay={0.7}
@@ -180,7 +373,7 @@ export default function Home() {
                   </tr>
                 </thead>
                 <tbody>
-                  {topHunterWinners.slice(0, 10).map((hunter: any, index: number) => (
+                  {hunterWinnersToUse.slice(0, 10).map((hunter: any, index: number) => (
                     <tr key={hunter.id} className="border-b border-cyber-darkblue last:border-0 hover:bg-cyber-darkblue">
                       <td className="py-2 px-3">
                         <span className="text-neon-yellow">#{index + 1}</span>
@@ -234,7 +427,7 @@ export default function Home() {
                   </tr>
                 </thead>
                 <tbody>
-                  {topBountyWinners.slice(0, 10).map((bounty: any, index: number) => (
+                  {bountyWinnersToUse.slice(0, 10).map((bounty: any, index: number) => (
                     <tr key={bounty.id} className="border-b border-cyber-darkblue last:border-0 hover:bg-cyber-darkblue">
                       <td className="py-2 px-3">
                         <span className="text-neon-yellow">#{index + 1}</span>
@@ -280,7 +473,7 @@ export default function Home() {
             transition={{ duration: 0.5, delay: 1.3 }}
           >
             <ul className="space-y-2">
-              {topHunters.slice(0, 5).map((hunter: any, index: number) => (
+              {huntersToUse.slice(0, 5).map((hunter: any, index: number) => (
                 <li key={hunter.id} className="flex justify-between items-center py-2 border-b border-cyber-darkblue last:border-0">
                   <Link href={`/player/${hunter.id}`} className="flex items-center hover:neon-text-green transition-colors duration-200">
                     <span className="text-neon-yellow mr-2">#{index + 1}</span>
@@ -315,7 +508,7 @@ export default function Home() {
             transition={{ duration: 0.5, delay: 1.5 }}
           >
             <ul className="space-y-2">
-              {topBounties.slice(0, 5).map((bounty: any, index: number) => (
+              {bountiesToUse.slice(0, 5).map((bounty: any, index: number) => (
                 <li key={bounty.id} className="flex justify-between items-center py-2 border-b border-cyber-darkblue last:border-0">
                   <Link href={`/player/${bounty.id}`} className="flex items-center hover:neon-text-pink transition-colors duration-200">
                     <span className="text-neon-yellow mr-2">#{index + 1}</span>
