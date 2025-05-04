@@ -1,60 +1,30 @@
 import fs from 'fs';
 import path from 'path';
 import getConfig from 'next/config';
-import { getJSONData } from './clientData';
 
 // Get the server runtime config
 const { serverRuntimeConfig } = getConfig();
 
 // Check if we're running on the server side
 const isServer = typeof window === 'undefined';
-const isDevelopment = process.env.NODE_ENV === 'development';
 
 // Function to read JSON file
-export async function readJsonFile(filePath: string) {
-  // In development, use file system if on server
-  if (isServer) {
-    try {
-      // First, try to read from the file system using absolute path
-      const dataDir = path.join(process.cwd(), 'public');
-      const relativePath = filePath.replace(/^data\//, '');
-      const fullPath = path.join(dataDir, 'data', relativePath);
-      
-      console.log(`Reading file from filesystem: ${fullPath}`);
-      
-      if (fs.existsSync(fullPath)) {
-        const fileContents = fs.readFileSync(fullPath, 'utf8');
-        try {
-          const data = JSON.parse(fileContents);
-          console.log(`Successfully read ${filePath} from filesystem`);
-          return data;
-        } catch (parseError) {
-          console.error(`Error parsing JSON from file ${filePath}:`, parseError);
-        }
-      } else {
-        console.log(`File does not exist at ${fullPath}`);
-      }
-    } catch (error) {
-      console.error(`Error reading file ${filePath} from filesystem:`, error);
-      // Fall through to fetch method
-    }
-  }
-  
-  // In production or if filesystem access failed, use fetch
-  try {
-    const filename = filePath.split('/').pop() || '';
-    console.log(`Trying to fetch data file: ${filename} from public directory`);
-    return await getJSONData(filename);
-  } catch (error) {
-    console.error(`Error fetching data file ${filePath}:`, error);
+export function readJsonFile(filePath: string) {
+  // Only use fs on the server side
+  if (!isServer) {
+    console.error('Attempted to read a file on the client side');
     return { data: [] };
   }
+  
+  const fullPath = path.join(process.cwd(), filePath);
+  const fileContents = fs.readFileSync(fullPath, 'utf8');
+  return JSON.parse(fileContents);
 }
 
 // Get players data
-export async function getPlayers() {
+export function getPlayers() {
   try {
-    const data = await readJsonFile('data/players.json');
+    const data = readJsonFile('data/players.json');
     return data.data || [];
   } catch (error) {
     console.error('Error loading players data:', error);
@@ -63,9 +33,9 @@ export async function getPlayers() {
 }
 
 // Get best players
-export async function getBestPlayers() {
+export function getBestPlayers() {
   try {
-    const data = await readJsonFile('data/best_players.json');
+    const data = readJsonFile('data/best_players.json');
     return data.best_players || [];
   } catch (error) {
     console.error('Error loading best players data:', error);
@@ -74,9 +44,9 @@ export async function getBestPlayers() {
 }
 
 // Get top hunters
-export async function getTopHunters() {
+export function getTopHunters() {
   try {
-    const data = await readJsonFile('data/top_hunters.json');
+    const data = readJsonFile('data/top_hunters.json');
     return data.top_hunters || [];
   } catch (error) {
     console.error('Error loading top hunters data:', error);
@@ -85,9 +55,9 @@ export async function getTopHunters() {
 }
 
 // Get top bounties
-export async function getTopBounties() {
+export function getTopBounties() {
   try {
-    const data = await readJsonFile('data/top_bounties.json');
+    const data = readJsonFile('data/top_bounties.json');
     return data.top_bounties || [];
   } catch (error) {
     console.error('Error loading top bounties data:', error);
@@ -96,9 +66,9 @@ export async function getTopBounties() {
 }
 
 // Get matches
-export async function getMatches() {
+export function getMatches() {
   try {
-    const data = await readJsonFile('data/matches.json');
+    const data = readJsonFile('data/matches.json');
     return data.data || [];
   } catch (error) {
     console.error('Error loading matches data:', error);
@@ -107,28 +77,28 @@ export async function getMatches() {
 }
 
 // Get player by ID
-export async function getPlayerById(id: string) {
-  const players = await getPlayers();
+export function getPlayerById(id: string) {
+  const players = getPlayers();
   return players.find((player: any) => player.id === id) || null;
 }
 
 // Get all player IDs
-export async function getAllPlayerIds() {
-  const players = await getPlayers();
+export function getAllPlayerIds() {
+  const players = getPlayers();
   return players.map((player: any) => player.id);
 }
 
 // Get player matches
-export async function getPlayerMatches(playerId: string) {
-  const matches = await getMatches();
+export function getPlayerMatches(playerId: string) {
+  const matches = getMatches();
   return matches.filter((match: any) => 
     match.hunter === playerId || match.bounty === playerId
   );
 }
 
 // Get player stats
-export async function getPlayerStats(playerId: string) {
-  const matches = await getPlayerMatches(playerId);
+export function getPlayerStats(playerId: string) {
+  const matches = getPlayerMatches(playerId);
   
   const hunterMatches = matches.filter((match: any) => match.hunter === playerId);
   const bountyMatches = matches.filter((match: any) => match.bounty === playerId);
@@ -216,10 +186,10 @@ function calculatePerformanceScore(stats: any) {
 }
 
 // Search players by name or ID
-export async function searchPlayers(query: string) {
+export function searchPlayers(query: string) {
   if (!query) return [];
   
-  const players = await getPlayers();
+  const players = getPlayers();
   const lowerQuery = query.toLowerCase();
   
   return players.filter((player: any) => 
@@ -229,8 +199,8 @@ export async function searchPlayers(query: string) {
 }
 
 // Get all factions
-export async function getAllFactions() {
-  const players = await getPlayers();
+export function getAllFactions() {
+  const players = getPlayers();
   const factions = new Set<string>();
   
   players.forEach((player: any) => {
@@ -243,16 +213,16 @@ export async function getAllFactions() {
 }
 
 // Get players by faction
-export async function getPlayersByFaction(faction: string) {
-  const players = await getPlayers();
+export function getPlayersByFaction(faction: string) {
+  const players = getPlayers();
   return players.filter((player: any) => 
     player.faction.toLowerCase() === faction.toLowerCase()
   );
 }
 
 // Get global stats
-export async function getGlobalStats() {
-  const matches = await getMatches();
+export function getGlobalStats() {
+  const matches = getMatches();
   const totalMatches = matches.length;
   
   const hunterWins = matches.filter((match: any) => match.winner_is_hunter === 1).length;
@@ -297,10 +267,10 @@ export async function getGlobalStats() {
 }
 
 // Get top hunter winners
-export async function getTopHunterWinners() {
+export function getTopHunterWinners() {
   try {
-    const players = await getPlayers();
-    const matches = await getMatches();
+    const players = getPlayers();
+    const matches = getMatches();
     
     // Group matches by hunter
     const hunterStats: { [key: string]: { wins: number, matches: number, name: string, id: string } } = {};
@@ -340,10 +310,10 @@ export async function getTopHunterWinners() {
 }
 
 // Get top bounty winners
-export async function getTopBountyWinners() {
+export function getTopBountyWinners() {
   try {
-    const players = await getPlayers();
-    const matches = await getMatches();
+    const players = getPlayers();
+    const matches = getMatches();
     
     // Group matches by bounty
     const bountyStats: { [key: string]: { wins: number, matches: number, name: string, id: string } } = {};
@@ -383,18 +353,18 @@ export async function getTopBountyWinners() {
 }
 
 // Calculate player rankings
-export async function calculatePlayerRankings() {
+export function calculatePlayerRankings() {
   try {
-    const players = await getPlayers();
+    const players = getPlayers();
     const hunterRankings: { id: string; score: number }[] = [];
     const bountyRankings: { id: string; score: number }[] = [];
     const overallRankings: { id: string; score: number }[] = [];
     
     // Calculate scores for each player
-    for (const player of players) {
-      const stats = await getPlayerStats(player.id);
+    players.forEach((player: any) => {
+      const stats = getPlayerStats(player.id);
       
-      if (stats.totalMatches === 0) continue; // Skip players with no matches
+      if (stats.totalMatches === 0) return; // Skip players with no matches
       
       // Add to overall rankings
       overallRankings.push({
@@ -418,7 +388,7 @@ export async function calculatePlayerRankings() {
           score: bountyScore
         });
       }
-    }
+    });
     
     // Sort all rankings by score (descending)
     overallRankings.sort((a, b) => b.score - a.score);
@@ -461,10 +431,10 @@ function calculateRoleScore(stats: any, isHunter: boolean) {
 }
 
 // Get player ranking by ID
-export async function getPlayerRanking(playerId: string) {
+export function getPlayerRanking(playerId: string) {
   try {
-    const rankings = await calculatePlayerRankings();
-    const player = await getPlayerById(playerId);
+    const rankings = calculatePlayerRankings();
+    const player = getPlayerById(playerId);
     
     if (!rankings || !player) {
       return {

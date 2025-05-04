@@ -1,49 +1,20 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import fs from 'fs';
-import path from 'path';
+import { getMatches, getPlayerMatches } from '@/lib/data';
 
-// Simple function to load JSON from the public directory
-async function loadJsonFile(filename: string) {
-  try {
-    const filePath = path.join(process.cwd(), 'public', 'data', filename);
-    console.log(`Loading ${filename} from: ${filePath}`);
-    
-    if (fs.existsSync(filePath)) {
-      const fileContents = fs.readFileSync(filePath, 'utf8');
-      return JSON.parse(fileContents);
-    } else {
-      console.error(`File not found: ${filePath}`);
-      return { data: [] };
-    }
-  } catch (error) {
-    console.error(`Error loading ${filename}:`, error);
-    return { data: [] };
-  }
-}
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { playerId } = req.query;
-    
-    // Load matches data directly from the JSON file
-    const matchesData = await loadJsonFile('matches.json');
-    const matches = matchesData.data || [];
-    
-    // Filter by player ID if requested
+
+    // Get matches for a specific player
     if (playerId) {
-      console.log(`Filtering matches for player: ${playerId}`);
-      const playerMatches = matches.filter((match: any) => 
-        match.hunter.toString() === playerId.toString() || 
-        match.bounty.toString() === playerId.toString()
-      );
-      
-      return res.status(200).json(playerMatches);
+      const matches = getPlayerMatches(playerId as string);
+      return res.status(200).json(matches);
     }
     
-    // Return all matches
+    // Get all matches
+    const matches = getMatches();
     return res.status(200).json(matches);
   } catch (error: any) {
-    console.error('Error in matches API:', error);
-    return res.status(500).json({ error: error.message || 'Error loading match data' });
+    return res.status(500).json({ error: error.message || 'Internal server error' });
   }
 } 
