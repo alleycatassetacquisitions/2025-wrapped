@@ -333,6 +333,20 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+      
+      {/* Footer section with debug link */}
+      <section className="py-8 border-t border-cyber-darkblue">
+        <div className="flex justify-center items-center">
+          <div className="text-center text-sm text-cyber-text">
+            <p>Alleycat Asset Acquisitions — Neotropolis 2025</p>
+            <p className="mt-2">
+              <Link href="/debug" className="text-neon-blue hover:underline">
+                Debug Tools
+              </Link>
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 } 

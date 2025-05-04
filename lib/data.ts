@@ -19,14 +19,20 @@ export async function readJsonFile(filePath: string) {
       const fileContents = fs.readFileSync(fullPath, 'utf8');
       return JSON.parse(fileContents);
     } catch (error) {
-      console.error(`Error reading file ${filePath}:`, error);
-      return { data: [] };
+      console.error(`Error reading file ${filePath} from filesystem:`, error);
+      // Fall through to fetch method
     }
   }
   
   // In production or on client side, use fetch
-  const filename = filePath.split('/').pop() || '';
-  return getJSONData(filename);
+  try {
+    const filename = filePath.split('/').pop() || '';
+    console.log(`Trying to fetch data file: ${filename} from public directory`);
+    return await getJSONData(filename);
+  } catch (error) {
+    console.error(`Error fetching data file ${filePath}:`, error);
+    return { data: [] };
+  }
 }
 
 // Get players data
