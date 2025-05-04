@@ -1,10 +1,10 @@
-# Neotropolis Bounty Hunter Wrapped
+# Alleycat 2025 Wrapped
 
-A visualization dashboard for the Neotropolis LARP bounty hunting game statistics, presented by Alleycat Asset Aquisitions. This app allows players to explore their personal stats, match history, and leaderboards for the quickdraw duels at Neotropolis 2025.
+A visualization dashboard for the bounty hunting game statistics, presented by Alleycat Asset Aquisitions. This app allows players to explore their personal stats, match history, and leaderboards for the quickdraw duels at 2025.
 
 ## About Alleycat Asset Aquisitions
 
-Alleycat Asset Aquisitions is the premier provider of bounty hunting services in Neotropolis. We maintain this dashboard to showcase the performance statistics of hunters and bounties throughout the city.
+Alleycat Asset Aquisitions is the premier provider of bounty hunting services. We maintain this dashboard to showcase the performance statistics of hunters and bounties throughout the city.
 
 ## Features
 

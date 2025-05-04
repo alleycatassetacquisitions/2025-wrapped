@@ -17,7 +17,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Alleycat 2025 Wrappe
     <>
       <Head>
         <title>{title}</title>
-        <meta name="description" content="Bounty Hunter statistics and performance data from Neotropolis 2025, provided by Alleycat Asset Aquisitions" />
+        <meta name="description" content="Bounty Hunter statistics and performance data from 2025, provided by Alleycat Asset Aquisitions" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -33,6 +33,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Alleycat 2025 Wrappe
                   width={40}
                   height={40}
                   className="object-contain"
+                  priority={true}
                 />
                 <span className="text-xl md:text-3xl font-heading neon-text-blue font-bold">
                   ALLEYCAT 2025 WRAPPED
@@ -78,20 +79,11 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Alleycat 2025 Wrappe
                   width={30}
                   height={30}
                   className="object-contain mr-2"
+                  priority={true}
                 />
                 <p className="text-cyber-text text-sm">
-                  © {new Date().getFullYear()} <span className="neon-text-purple">Alleycat Asset Aquisitions</span> | Neotropolis LARP
+                  © {new Date().getFullYear()} <span className="neon-text-purple">Alleycat Asset Aquisitions</span>
                 </p>
-              </div>
-              <div className="flex space-x-4">
-                <a 
-                  href="https://neotropolis.net" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-cyber-text hover:neon-text-purple transition-all duration-300"
-                >
-                  Neotropolis LARP
-                </a>
               </div>
             </div>
           </div>

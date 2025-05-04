@@ -17,7 +17,7 @@ export default function SearchPage() {
     async function fetchFactions() {
       try {
         const data = await getAllFactions();
-        setFactions(data);
+        setFactions(data as string[]);
       } catch (error) {
         console.error('Error fetching factions:', error);
       }
