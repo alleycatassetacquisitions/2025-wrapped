@@ -84,21 +84,59 @@ export function useBestPlayers() {
 export function usePlayer(id: string) {
   const { data, error } = useSWR(id ? `/api/players?id=${id}` : null, async (url) => {
     try {
+      // First try the API
+      console.log(`Fetching player ${id} from API`);
       const response = await fetch(url);
+      
       if (response.ok) {
-        return response.json();
+        const playerData = await response.json();
+        console.log(`Successfully fetched player ${id} from API`);
+        return playerData;
       }
       
-      // If API fails, attempt direct data access
-      console.log('API call failed, attempting direct data access for player', id);
-      const players = await getJSONData('players.json');
-      const player = players.data?.find((p: any) => p.id === id);
+      console.error(`API failed for player ${id}: ${response.status} ${response.statusText}`);
       
-      if (!player) {
-        throw new Error('Player not found');
+      // If API fails, try direct data access
+      if (typeof window !== 'undefined' && window.__CACHED_DATA__) {
+        console.log(`Trying to get player ${id} from cached data`);
+        // Try to get from cache first
+        if (window.__CACHED_DATA__['players.json']) {
+          const players = window.__CACHED_DATA__['players.json'].data || [];
+          const player = players.find((p: any) => 
+            p.id === id || 
+            p.id === Number(id) || 
+            p.id.toString() === id.toString()
+          );
+          
+          if (player) {
+            console.log(`Found player ${id} in cached data`);
+            return {
+              ...player,
+              rankings: { overall: 1, hunter: player.hunter === 1 ? 1 : 0, bounty: player.hunter === 0 ? 1 : 0 }
+            };
+          }
+        }
       }
       
-      return player;
+      // Final fallback - load data directly
+      console.log(`Trying to load player ${id} directly from data file`);
+      const playersData = await getJSONData('players.json');
+      const players = playersData.data || [];
+      const player = players.find((p: any) => 
+        p.id === id || 
+        p.id === Number(id) || 
+        p.id.toString() === id.toString()
+      );
+      
+      if (player) {
+        console.log(`Found player ${id} in direct data access`);
+        return {
+          ...player,
+          rankings: { overall: 1, hunter: player.hunter === 1 ? 1 : 0, bounty: player.hunter === 0 ? 1 : 0 }
+        };
+      }
+      
+      throw new Error(`Player ${id} not found`);
     } catch (error) {
       console.error(`Error fetching player ${id}:`, error);
       throw error;
