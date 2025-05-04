@@ -44,12 +44,13 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## Data Structure
 
-The app uses the following data files in the `data` folder:
+The app uses data files in the `data` folder.
+
+If you are looking for the original raw data from our on site server, that can be found in:
 - `players.json`: Player information and attributes
 - `matches.json`: Match results and timing data
-- `best_players.json`: Overall top performers
-- `top_hunters.json`: Fastest hunters
-- `top_bounties.json`: Fastest bounties
+- `hunters.json`: All hunters ordered by rank.
+- `bounties.json`: All bounties ordered by rank.
 
 ## Deployment
 
