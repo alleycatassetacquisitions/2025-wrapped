@@ -1,34 +1,23 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getPlayers, getPlayerById, searchPlayers, getPlayersByFaction, getPlayerRanking } from '@/lib/data';
-import { getJSONData } from '@/lib/clientData';
-import { getCachedData } from '@/components/DataPreloader';
+import fs from 'fs';
+import path from 'path';
 
-// Utility function to log and return player data
-async function getPlayersData() {
-  console.log('Attempting to load players data...');
+// Simple function to load JSON from the public directory
+async function loadJsonFile(filename: string) {
   try {
-    // Try cached/direct method first as it's most reliable in production
-    const playersData = await getCachedData('players.json');
+    const filePath = path.join(process.cwd(), 'public', 'data', filename);
+    console.log(`Loading ${filename} from: ${filePath}`);
     
-    if (playersData && playersData.data && playersData.data.length > 0) {
-      console.log(`Successfully loaded ${playersData.data.length} players via cached/direct access`);
-      return playersData.data;
+    if (fs.existsSync(filePath)) {
+      const fileContents = fs.readFileSync(filePath, 'utf8');
+      return JSON.parse(fileContents);
+    } else {
+      console.error(`File not found: ${filePath}`);
+      return { data: [] };
     }
-    
-    // Fall back to server method
-    console.log('Direct file access returned empty array, trying server method');
-    const players = await getPlayers();
-    
-    if (players && players.length > 0) {
-      console.log(`Successfully loaded ${players.length} players via server method`);
-      return players;
-    }
-    
-    console.error('All player loading methods failed');
-    return [];
   } catch (error) {
-    console.error('Failed to load players data:', error);
-    return [];
+    console.error(`Error loading ${filename}:`, error);
+    return { data: [] };
   }
 }
 
@@ -37,16 +26,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { id, search, faction } = req.query;
     
     console.log(`API Request: ${req.url}`);
+    
+    // Load all players directly
+    const playersData = await loadJsonFile('players.json');
+    const players = playersData.data || [];
+    
+    // Check if we have players data
+    if (!players || players.length === 0) {
+      console.error('Failed to load players data');
+      return res.status(500).json({ error: 'Failed to load player data' });
+    }
 
     // Get specific player by ID
     if (id) {
       console.log(`Looking for player with ID: ${id}`);
       
-      // Load all players and find the one we need
-      const allPlayers = await getPlayersData();
-      
-      // Try to match the ID in various ways
-      const player = allPlayers.find((p: any) => 
+      // Find player by ID
+      const player = players.find((p: any) => 
         p.id === id || 
         p.id === Number(id) || 
         p.id.toString() === id.toString()
@@ -54,22 +50,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       
       if (player) {
         console.log(`Found player: ${player.name}`);
-        // Add mock rankings since the real calculation might fail
+        
+        // Add simple mock rankings
         const rankings = { 
           overall: 1, 
           hunter: player.hunter === 1 ? 1 : 0, 
           bounty: player.hunter === 0 ? 1 : 0 
         };
-        
-        try {
-          // Try to get real rankings if possible
-          const realRankings = await getPlayerRanking(id as string);
-          if (realRankings) {
-            Object.assign(rankings, realRankings);
-          }
-        } catch (e) {
-          console.error('Failed to get rankings, using mock data:', e);
-        }
         
         return res.status(200).json({
           ...player,
@@ -77,69 +64,40 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
       }
       
-      console.error(`Player with ID ${id} not found in ${allPlayers.length} players`);
-      
-      // Log the first few players for debugging
-      if (allPlayers.length > 0) {
-        console.log('First few players:', allPlayers.slice(0, 3));
-      }
-      
+      console.error(`Player with ID ${id} not found in ${players.length} players`);
       return res.status(404).json({ error: 'Player not found' });
     }
     
     // Search players
     if (search) {
       console.log(`Searching for players matching: ${search}`);
-      try {
-        const results = await searchPlayers(search as string);
-        if (results && results.length > 0) {
-          return res.status(200).json(results);
-        }
-        
-        // Fallback to direct search
-        const allPlayers = await getPlayersData();
-        const query = (search as string).toLowerCase();
-        const filtered = allPlayers.filter((player: any) => 
-          player.id.includes(query) || 
-          player.name.toLowerCase().includes(query)
-        );
-        
-        return res.status(200).json(filtered);
-      } catch (error) {
-        console.error('Search failed:', error);
-        return res.status(200).json([]);
-      }
+      const query = (search as string).toLowerCase();
+      
+      const filtered = players.filter((player: any) => 
+        player.id?.toString().includes(query) || 
+        player.name?.toLowerCase().includes(query)
+      );
+      
+      return res.status(200).json(filtered);
     }
     
     // Get players by faction
     if (faction) {
       console.log(`Getting players from faction: ${faction}`);
-      try {
-        const results = await getPlayersByFaction(faction as string);
-        if (results && results.length > 0) {
-          return res.status(200).json(results);
-        }
-        
-        // Fallback to direct filtering
-        const allPlayers = await getPlayersData();
-        const factionLower = (faction as string).toLowerCase();
-        const filtered = allPlayers.filter((player: any) => 
-          player.faction && player.faction.toLowerCase() === factionLower
-        );
-        
-        return res.status(200).json(filtered);
-      } catch (error) {
-        console.error('Faction filtering failed:', error);
-        return res.status(200).json([]);
-      }
+      const factionLower = (faction as string).toLowerCase();
+      
+      const filtered = players.filter((player: any) => 
+        player.faction && player.faction.toLowerCase() === factionLower
+      );
+      
+      return res.status(200).json(filtered);
     }
     
     // Get all players
-    console.log('Getting all players');
-    const allPlayers = await getPlayersData();
-    return res.status(200).json(allPlayers);
+    console.log('Returning all players');
+    return res.status(200).json(players);
   } catch (error: any) {
-    console.error('General error in players API:', error);
-    return res.status(500).json({ error: error.message || 'Internal server error' });
+    console.error('Error in players API:', error);
+    return res.status(500).json({ error: error.message || 'Error loading player data' });
   }
 } 
