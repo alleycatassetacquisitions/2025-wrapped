@@ -1,6 +1,11 @@
 import fs from 'fs';
 import path from 'path';
 import getConfig from 'next/config';
+import players from '../public/data/players.json';
+import best_players from '../public/data/best_players.json';
+import top_bounties from '../public/data/top_bounties.json';
+import top_hunters from '../public/data/top_hunters.json';
+import matches from '../public/data/matches.json';
 
 // Get the server runtime config
 const { serverRuntimeConfig } = getConfig();
@@ -23,57 +28,27 @@ export function readJsonFile(filePath: string) {
 
 // Get players data
 export function getPlayers() {
-  try {
-    const data = readJsonFile('public/data/players.json');
-    return data.data || [];
-  } catch (error) {
-    console.error('Error loading players data:', error);
-    return [];
-  }
+  return players.data;
 }
 
 // Get best players
 export function getBestPlayers() {
-  try {
-    const data = readJsonFile('public/data/best_players.json');
-    return data.best_players || [];
-  } catch (error) {
-    console.error('Error loading best players data:', error);
-    return [];
-  }
+  return best_players.best_players;
 }
 
 // Get top hunters
 export function getTopHunters() {
-  try {
-    const data = readJsonFile('public/data/top_hunters.json');
-    return data.top_hunters || [];
-  } catch (error) {
-    console.error('Error loading top hunters data:', error);
-    return [];
-  }
+  return top_hunters.top_hunters;
 }
 
 // Get top bounties
 export function getTopBounties() {
-  try {
-    const data = readJsonFile('public/data/top_bounties.json');
-    return data.top_bounties || [];
-  } catch (error) {
-    console.error('Error loading top bounties data:', error);
-    return [];
-  }
+  return top_bounties.top_bounties;
 }
 
 // Get matches
 export function getMatches() {
-  try {
-    const data = readJsonFile('public/data/matches.json');
-    return data.data || [];
-  } catch (error) {
-    console.error('Error loading matches data:', error);
-    return [];
-  }
+  return matches.data;
 }
 
 // Get player by ID
