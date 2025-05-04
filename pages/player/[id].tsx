@@ -28,32 +28,35 @@ export default function PlayerDetail() {
   useEffect(() => {
     if (!matches || matches.length === 0) return;
     
-    // Create a Set of unique opponent IDs
-    const opponentIds = new Set<string>();
+    // Create a Set of unique player IDs (both opponents and the current player)
+    const playerIds = new Set<string>();
+    
+    // Add current player ID
+    if (id) {
+      playerIds.add(id as string);
+    }
     
     matches.forEach((match: any) => {
-      const isHunterInMatch = match.hunter === id || match.hunter_id === id;
-      const opponentId = isHunterInMatch 
-        ? (match.bounty || match.bounty_id) 
-        : (match.hunter || match.hunter_id);
+      // Add both hunter and bounty IDs to fetch all player names
+      const hunterId = match.hunter || match.hunter_id;
+      const bountyId = match.bounty || match.bounty_id;
       
-      if (opponentId) {
-        opponentIds.add(opponentId);
-      }
+      if (hunterId) playerIds.add(hunterId);
+      if (bountyId) playerIds.add(bountyId);
     });
     
-    // Fetch opponent names
-    async function fetchOpponentNames() {
+    // Fetch all player names
+    async function fetchPlayerNames() {
       try {
-        const promises = Array.from(opponentIds).map(async (opponentId) => {
-          const response = await fetch(`/api/players?id=${opponentId}`);
+        const promises = Array.from(playerIds).map(async (playerId) => {
+          const response = await fetch(`/api/players?id=${playerId}`);
           const data = await response.json();
-          return { id: opponentId, name: data?.name || `Unknown #${opponentId}` };
+          return { id: playerId, name: data?.name || `Unknown #${playerId}` };
         });
         
         const results = await Promise.all(promises);
         
-        // Create a map of opponent IDs to names
+        // Create a map of player IDs to names
         const namesMap: {[key: string]: string} = {};
         results.forEach((result) => {
           namesMap[result.id] = result.name;
@@ -61,11 +64,11 @@ export default function PlayerDetail() {
         
         setOpponentNames(namesMap);
       } catch (error) {
-        console.error("Error fetching opponent names:", error);
+        console.error("Error fetching player names:", error);
       }
     }
     
-    fetchOpponentNames();
+    fetchPlayerNames();
   }, [matches, id]);
   
   // Calculate win streak from match history
@@ -309,7 +312,6 @@ export default function PlayerDetail() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-cyber-darkblue">
-                <th className="py-2 px-4 text-left">Role</th>
                 <th className="py-2 px-4 text-left">Opponent</th>
                 <th className="py-2 px-4 text-right">Reaction Time</th>
                 <th className="py-2 px-4 text-right">Result</th>
@@ -348,19 +350,6 @@ export default function PlayerDetail() {
                       className="border-b border-cyber-darkblue hover:bg-cyber-darkblue"
                     >
                       <td className="py-3 px-4">
-                        {isHunterInMatch ? (
-                          <span className="inline-flex items-center space-x-1 neon-text-green">
-                            <FaCrosshairs />
-                            <span>Hunter</span>
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center space-x-1 neon-text-pink">
-                            <FaShieldAlt />
-                            <span>Bounty</span>
-                          </span>
-                        )}
-                      </td>
-                      <td className="py-3 px-4">
                         <Link href={`/player/${opponentId}`} className="hover:neon-text-blue transition-colors duration-200">
                           {opponentName}
                           <span className="ml-2 text-xs text-cyber-text">#{opponentId}</span>
@@ -389,7 +378,7 @@ export default function PlayerDetail() {
                 })
               ) : (
                 <tr>
-                  <td colSpan={4} className="py-4 text-center text-cyber-text">
+                  <td colSpan={3} className="py-4 text-center text-cyber-text">
                     No matches found for this player.
                   </td>
                 </tr>
