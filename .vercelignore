@@ -1,0 +1,7 @@
+# Temporary files
+.DS_Store
+*.log
+
+# Do NOT ignore data files
+!public/data/
+!data/ 

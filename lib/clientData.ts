@@ -5,11 +5,17 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 // Function to get data from a JSON file in the public directory
 export async function getJSONData(filename: string) {
   try {
+    console.log(`Fetching data from: /data/${filename}`);
     const response = await fetch(`/data/${filename}`);
+    
     if (!response.ok) {
-      throw new Error(`Failed to fetch ${filename}`);
+      console.error(`Failed to fetch ${filename}: ${response.status} ${response.statusText}`);
+      throw new Error(`Failed to fetch ${filename}: ${response.status} ${response.statusText}`);
     }
-    return response.json();
+    
+    const data = await response.json();
+    console.log(`Successfully fetched ${filename}`);
+    return data;
   } catch (error) {
     console.error(`Error fetching ${filename}:`, error);
     return { data: [] };
