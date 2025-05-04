@@ -13,18 +13,34 @@ const isDevelopment = process.env.NODE_ENV === 'development';
 // Function to read JSON file
 export async function readJsonFile(filePath: string) {
   // In development, use file system if on server
-  if (isDevelopment && isServer) {
+  if (isServer) {
     try {
-      const fullPath = path.join(process.cwd(), filePath);
-      const fileContents = fs.readFileSync(fullPath, 'utf8');
-      return JSON.parse(fileContents);
+      // First, try to read from the file system using absolute path
+      const dataDir = path.join(process.cwd(), 'public');
+      const relativePath = filePath.replace(/^data\//, '');
+      const fullPath = path.join(dataDir, 'data', relativePath);
+      
+      console.log(`Reading file from filesystem: ${fullPath}`);
+      
+      if (fs.existsSync(fullPath)) {
+        const fileContents = fs.readFileSync(fullPath, 'utf8');
+        try {
+          const data = JSON.parse(fileContents);
+          console.log(`Successfully read ${filePath} from filesystem`);
+          return data;
+        } catch (parseError) {
+          console.error(`Error parsing JSON from file ${filePath}:`, parseError);
+        }
+      } else {
+        console.log(`File does not exist at ${fullPath}`);
+      }
     } catch (error) {
       console.error(`Error reading file ${filePath} from filesystem:`, error);
       // Fall through to fetch method
     }
   }
   
-  // In production or on client side, use fetch
+  // In production or if filesystem access failed, use fetch
   try {
     const filename = filePath.split('/').pop() || '';
     console.log(`Trying to fetch data file: ${filename} from public directory`);

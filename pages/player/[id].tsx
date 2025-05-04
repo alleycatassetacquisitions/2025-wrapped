@@ -7,6 +7,48 @@ import StatCard from '@/components/StatCard';
 import { usePlayer, usePlayerStats, usePlayerMatches } from '@/lib/clientData';
 import { getCachedData } from '@/components/DataPreloader';
 
+// Define interfaces for our data types
+interface Player {
+  id: string | number;
+  name: string;
+  hunter: number;
+  faction?: string;
+}
+
+interface Match {
+  id: string | number;
+  hunter: string | number;
+  hunter_id?: string | number;
+  bounty: string | number;
+  bounty_id?: string | number;
+  hunter_time: number;
+  bounty_time: number;
+  winner_is_hunter: number;
+  winner?: string;
+  timestamp: string;
+  hunter_name?: string;
+  bounty_name?: string;
+}
+
+interface PlayerStats {
+  totalMatches: number;
+  totalWins: number;
+  winRate: number;
+  hunterMatches: number;
+  bountyMatches: number;
+  hunterWins: number;
+  bountyWins: number;
+  avgHunterTime?: number;
+  avgBountyTime?: number;
+  score?: number;
+}
+
+interface Rankings {
+  overall: number;
+  hunter: number;
+  bounty: number;
+}
+
 export default function PlayerDetail() {
   const router = useRouter();
   const { id } = router.query;
@@ -17,9 +59,17 @@ export default function PlayerDetail() {
   const { matches, isLoading: isLoadingMatches } = usePlayerMatches(id as string);
   
   // Direct data loading fallback
-  const [directPlayer, setDirectPlayer] = useState<any>(null);
-  const [directMatches, setDirectMatches] = useState<any[]>([]);
-  const [directStats, setDirectStats] = useState<any>({});
+  const [directPlayer, setDirectPlayer] = useState<Player | null>(null);
+  const [directMatches, setDirectMatches] = useState<Match[]>([]);
+  const [directStats, setDirectStats] = useState<PlayerStats>({
+    totalMatches: 0,
+    totalWins: 0,
+    winRate: 0,
+    hunterMatches: 0,
+    bountyMatches: 0,
+    hunterWins: 0,
+    bountyWins: 0
+  });
   const [isLoadingDirect, setIsLoadingDirect] = useState(true);
   const [usingDirectData, setUsingDirectData] = useState(false);
   
@@ -38,8 +88,8 @@ export default function PlayerDetail() {
         
         // Load players data
         const playersData = await getCachedData('players.json');
-        const players = playersData.data || [];
-        const foundPlayer = players.find((p: any) => 
+        const players = (playersData.data || []) as Player[];
+        const foundPlayer = players.find((p) => 
           p.id === id || 
           p.id === Number(id) || 
           p.id.toString() === id.toString()
@@ -52,33 +102,37 @@ export default function PlayerDetail() {
           
           // Load matches
           const matchesData = await getCachedData('matches.json');
-          const allMatches = matchesData.data || [];
-          const playerMatches = allMatches.filter((match: any) => 
-            match.hunter === id || match.bounty === id
+          const allMatches = (matchesData.data || []) as Match[];
+          const playerMatches = allMatches.filter((match) => 
+            match.hunter.toString() === id.toString() || 
+            match.bounty.toString() === id.toString()
           );
           setDirectMatches(playerMatches);
           
           // Calculate basic stats
           if (playerMatches.length > 0) {
-            const hunterMatches = playerMatches.filter((match: any) => match.hunter === id);
-            const bountyMatches = playerMatches.filter((match: any) => match.bounty === id);
+            const hunterMatches = playerMatches.filter((match) => 
+              match.hunter.toString() === id.toString()
+            );
+            const bountyMatches = playerMatches.filter((match) => 
+              match.bounty.toString() === id.toString()
+            );
             
-            const hunterWins = hunterMatches.filter((match: any) => match.winner_is_hunter === 1).length;
-            const bountyWins = bountyMatches.filter((match: any) => match.winner_is_hunter === 0).length;
+            const hunterWins = hunterMatches.filter((match) => match.winner_is_hunter === 1).length;
+            const bountyWins = bountyMatches.filter((match) => match.winner_is_hunter === 0).length;
             
             const totalMatches = playerMatches.length;
             const totalWins = hunterWins + bountyWins;
             const winRate = totalMatches > 0 ? totalWins / totalMatches : 0;
             
-            const calculatedStats = {
+            const calculatedStats: PlayerStats = {
               hunterMatches: hunterMatches.length,
               bountyMatches: bountyMatches.length,
               hunterWins,
               bountyWins,
               totalMatches,
               totalWins,
-              winRate,
-              matches: playerMatches
+              winRate
             };
             
             setDirectStats(calculatedStats);
@@ -111,20 +165,22 @@ export default function PlayerDetail() {
   
   // Fetch opponent names when matches change
   useEffect(() => {
-    const matchesToUse = usingDirectData ? directMatches : matches;
-    if (!matchesToUse || matchesToUse.length === 0) return;
+    const matchesToUse = usingDirectData ? directMatches : (matches || []);
+    if (matchesToUse.length === 0) return;
     
     // Create a Set of unique opponent IDs
     const opponentIds = new Set<string>();
     
-    matchesToUse.forEach((match: any) => {
-      const isHunterInMatch = match.hunter === id || match.hunter_id === id;
+    matchesToUse.forEach((match: Match) => {
+      const isHunterInMatch = match.hunter.toString() === id?.toString() || 
+                              (match.hunter_id && match.hunter_id.toString() === id?.toString());
+      
       const opponentId = isHunterInMatch 
         ? (match.bounty || match.bounty_id) 
         : (match.hunter || match.hunter_id);
       
       if (opponentId) {
-        opponentIds.add(opponentId);
+        opponentIds.add(opponentId.toString());
       }
     });
     
@@ -133,14 +189,13 @@ export default function PlayerDetail() {
       try {
         // First try to get players directly
         const playersData = await getCachedData('players.json');
-        const players = playersData.data || [];
+        const players = (playersData.data || []) as Player[];
         
         const namesMap: {[key: string]: string} = {};
         
         Array.from(opponentIds).forEach(opponentId => {
-          const player = players.find((p: any) => 
-            p.id === opponentId || 
-            p.id.toString() === opponentId.toString()
+          const player = players.find((p) => 
+            p.id.toString() === opponentId
           );
           
           if (player) {
@@ -161,19 +216,20 @@ export default function PlayerDetail() {
   
   // Calculate win streak from match history
   const calculateWinStreak = () => {
-    const matchesToUse = usingDirectData ? directMatches : matches;
-    if (!matchesToUse || matchesToUse.length === 0) return 0;
+    const matchesToUse = usingDirectData ? directMatches : (matches || []);
+    if (matchesToUse.length === 0) return 0;
     
     // Sort matches by timestamp (newest first)
-    const sortedMatches = [...matchesToUse].sort((a, b) => 
+    const sortedMatches = [...matchesToUse].sort((a: Match, b: Match) => 
       new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     );
     
     let currentStreak = 0;
     let maxStreak = 0;
     
-    for (const match of sortedMatches) {
-      const isHunterInMatch = match.hunter === id || match.hunter_id === id;
+    for (const match of sortedMatches as Match[]) {
+      const isHunterInMatch = match.hunter.toString() === id?.toString() || 
+                              (match.hunter_id && match.hunter_id.toString() === id?.toString());
       const winnerIsHunter = match.winner_is_hunter === 1 || match.winner === 'hunter';
       const isWin = (isHunterInMatch && winnerIsHunter) || (!isHunterInMatch && !winnerIsHunter);
       
@@ -190,15 +246,16 @@ export default function PlayerDetail() {
   
   // Calculate best time from match history
   const calculateBestTime = () => {
-    const matchesToUse = usingDirectData ? directMatches : matches;
-    if (!matchesToUse || matchesToUse.length === 0) return 0;
+    const matchesToUse = usingDirectData ? directMatches : (matches || []);
+    if (matchesToUse.length === 0) return 0;
     
     const playerToUse = usingDirectData ? directPlayer : player;
-    const isHunter = playerToUse.hunter === 1;
+    const isHunter = playerToUse?.hunter === 1;
     let bestTime = Infinity;
     
-    matchesToUse.forEach((match: any) => {
-      const isHunterInMatch = match.hunter === id || match.hunter_id === id;
+    matchesToUse.forEach((match: Match) => {
+      const isHunterInMatch = match.hunter.toString() === id?.toString() || 
+                              (match.hunter_id && match.hunter_id.toString() === id?.toString());
       
       // Only consider matches where player's role matches their primary role
       if (isHunterInMatch === isHunter) {
@@ -426,16 +483,19 @@ export default function PlayerDetail() {
             </thead>
             <tbody>
               {matchesToUse && matchesToUse.length > 0 ? (
-                matchesToUse.map((match: any, index: number) => {
+                matchesToUse.map((match: Match, index: number) => {
                   // Determine if the player was the hunter in this match
-                  const isHunterInMatch = match.hunter === playerToUse.id || match.hunter_id === playerToUse.id;
+                  const isHunterInMatch = match.hunter.toString() === id?.toString() || 
+                                         (match.hunter_id && match.hunter_id.toString() === id?.toString());
                   
                   const opponentId = isHunterInMatch 
                     ? (match.bounty || match.bounty_id) 
                     : (match.hunter || match.hunter_id);
                   
+                  const opponentIdString = opponentId ? opponentId.toString() : '';
+                  
                   // Use the lookup map to get opponent name
-                  const opponentName = opponentNames[opponentId] || 
+                  const opponentName = opponentNames[opponentIdString] || 
                     (isHunterInMatch 
                       ? (match.bounty_name || 'Unknown Bounty') 
                       : (match.hunter_name || 'Unknown Hunter'));
@@ -450,7 +510,7 @@ export default function PlayerDetail() {
                   
                   return (
                     <motion.tr
-                      key={match.id || index}
+                      key={match.id?.toString() || index.toString()}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3, delay: index * 0.05 }}
@@ -470,9 +530,9 @@ export default function PlayerDetail() {
                         )}
                       </td>
                       <td className="py-3 px-4">
-                        <Link href={`/player/${opponentId}`} className="hover:neon-text-blue transition-colors duration-200">
+                        <Link href={`/player/${opponentIdString}`} className="hover:neon-text-blue transition-colors duration-200">
                           {opponentName}
-                          <span className="ml-2 text-xs text-cyber-text">#{opponentId}</span>
+                          <span className="ml-2 text-xs text-cyber-text">#{opponentIdString}</span>
                         </Link>
                       </td>
                       <td className="py-3 px-4 text-right">

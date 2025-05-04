@@ -1,12 +1,57 @@
 import useSWR from 'swr';
+import fs from 'fs';
+import path from 'path';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 // Function to get data from a JSON file in the public directory
 export async function getJSONData(filename: string) {
   try {
-    console.log(`Fetching data from: /data/${filename}`);
-    const response = await fetch(`/data/${filename}`);
+    // We need to use a different approach for server-side vs client-side
+    const isServer = typeof window === 'undefined';
+    
+    // For server-side, try reading from filesystem first
+    if (isServer) {
+      try {
+        const dataDir = path.join(process.cwd(), 'public', 'data');
+        const fullPath = path.join(dataDir, filename);
+        console.log(`Attempting to read file directly from filesystem: ${fullPath}`);
+        
+        if (fs.existsSync(fullPath)) {
+          const fileContents = fs.readFileSync(fullPath, 'utf8');
+          const data = JSON.parse(fileContents);
+          console.log(`Successfully read ${filename} from filesystem`);
+          return data;
+        } else {
+          console.log(`File not found at ${fullPath}, falling back to fetch`);
+        }
+      } catch (fsError) {
+        console.error(`Filesystem access failed for ${filename}:`, fsError);
+      }
+    }
+    
+    // If filesystem access failed or we're on client-side, use fetch
+    let url;
+    
+    if (isServer) {
+      // In server environment, we need to use an absolute URL with the proper origin
+      // For local development, use http://localhost:3000
+      // For production, ideally use process.env.VERCEL_URL or a similar environment variable
+      const baseUrl = process.env.VERCEL_URL 
+        ? `https://${process.env.VERCEL_URL}`
+        : process.env.NODE_ENV === 'development' 
+          ? 'http://localhost:3000' 
+          : '';
+          
+      url = `${baseUrl}/data/${filename}`;
+      console.log(`Fetching data from (server-side): ${url}`);
+    } else {
+      // In client environment, we can use a relative URL
+      url = `/data/${filename}`;
+      console.log(`Fetching data from (client-side): ${url}`);
+    }
+    
+    const response = await fetch(url);
     
     if (!response.ok) {
       console.error(`Failed to fetch ${filename}: ${response.status} ${response.statusText}`);
